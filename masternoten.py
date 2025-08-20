@@ -262,7 +262,7 @@ for m in MODULES:
     if my_grade_table.get_ects_per_module(m) > 0:
         print(m, "\n ects:", my_grade_table.get_ects_per_module(m, weighted=False), "grade:", my_grade_table.get_grade_per_module(m, weighted=False))
 
-# pick subjects you want to possibly re-asign to a new module
+# pick subjects you want to possibly re-asign to a new module, the code checks itself if the asignment is possible/ valid
 qml = my_grade_table.get_subject_by_name("QML")
 text_mining = my_grade_table.get_subject_by_name("NLP")
 mmllm = my_grade_table.get_subject_by_name("MMLLM_seminar")
