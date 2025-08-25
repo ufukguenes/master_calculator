@@ -192,9 +192,12 @@ class GradeTable:
             for i, s in enumerate(list_of_adjustable_subjects):
                 s.current_module = current_combination[i]
             new_min_grade = my_grade_table.get_final_grade(round=False)
-            if new_min_grade < min_grade:
-                min_grade = new_min_grade
-                optimal_assignment = [(s.name, s.current_module) for s in choosable]
+
+            if my_grade_table.check_all():
+                new_min_grade = my_grade_table.get_final_grade(round=False)
+                if new_min_grade < min_grade:
+                    min_grade = new_min_grade
+                    optimal_assignment = [(s.name, s.current_module) for s in choosable]
         return min_grade, optimal_assignment
 
 
@@ -224,9 +227,11 @@ class GradeTable:
         for current_combination in all_combinations:
             for i, s in enumerate(list_of_adjustable_subjects):
                 s.current_module = current_combination[i]
-            new_min_grade = my_grade_table.get_final_grade(round=False)
-            if new_min_grade < grade_better_than:
-                optimal_assignments[new_min_grade] = [(s.name, s.current_module) for s in choosable]
+            
+            if my_grade_table.check_all():
+                new_min_grade = my_grade_table.get_final_grade(round=False)
+                if new_min_grade < grade_better_than:
+                    optimal_assignments[new_min_grade] = [(s.name, s.current_module) for s in choosable]
         return optimal_assignments
 
 
