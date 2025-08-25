@@ -187,30 +187,33 @@ class GradeTable:
         print("number of combinations: ", len(all_combinations))
 
         min_grade = 5
-        optimal_assignment = []
+        optimal_assignments = {}
         for current_combination in all_combinations:
             for i, s in enumerate(list_of_adjustable_subjects):
                 s.current_module = current_combination[i]
-            if my_grade_table.check_all():
-                min_grade = min(my_grade_table.get_final_grade(round=False), min_grade)
-                optimal_assignment = [(s.name, s.current_module) for s in list_of_adjustable_subjects]
-        return min_grade, optimal_assignment
+            new_min_grade = my_grade_table.get_final_grade(round=False)
+            if new_min_grade < min_grade:
+                min_grade = new_min_grade
+                optimal_assignments[new_min_grade] = [(s.name, s.current_module) for s in choosable]
+        return min_grade, optimal_assignments
 
 
     def optimize_random(self, list_of_adjustable_subjects, num_iterations=1000):
         samples_of_k_size = random.sample(list_of_adjustable_subjects, len(list_of_adjustable_subjects))
 
         min_grade = 5
-        optimal_assignment = []
+        optimal_assignments = {}
         for i in range(num_iterations):
             for s in samples_of_k_size:
                 s.current_module = s.possible_modules[random.randint(0, len(s.possible_modules)-1)]
 
             if my_grade_table.check_all():
-                min_grade = min(my_grade_table.get_final_grade(round=False), min_grade)
-                optimal_assignment = [(s.name, s.current_module) for s in choosable]
+                new_min_grade = my_grade_table.get_final_grade(round=False)
+                if new_min_grade < min_grade:
+                    min_grade = new_min_grade
+                    optimal_assignments[new_min_grade] = [(s.name, s.current_module) for s in choosable]
 
-        return min_grade, optimal_assignment
+        return min_grade, optimal_assignments
 
 
 my_grade_table = GradeTable(MODULES.AI, MODULES.THEORETICAL)
@@ -277,16 +280,25 @@ choosable = [qml, text_mining, mmllm, xai_practical, mmi, xai, comp_vision, gzns
 
 # find best grade by exhaustive search (for large number of choosable subjects, this can take long)
 print()
-min_grade, optimal_assignment = my_grade_table.optimize_exhaustive(choosable)
+min_grade, optimal_assignments = my_grade_table.optimize_exhaustive(choosable)
 print("minimum grade found (exhaustive): ", min_grade)
-print("optimal assignment:")
-for s in optimal_assignment:
-    print(" ", s[0], s[1])
+print("optimal assignments:")
+for grade_key in optimal_assignments:
+    print("for grade: ", grade_key)
+    for subject in optimal_assignments[grade_key]:
+        print(" ", subject[0], subject[1])
+    print()
+    
 
 
 # random search for best re-asignment
+"""
 min_grade, optimal_assignment = my_grade_table.optimize_random(choosable, num_iterations=1000) 
 print("minimum grade found (random): ", min_grade)
-print("optimal assignment:")
-for s in optimal_assignment:
-    print(" ", s[0], s[1])
+print("optimal assignments:")
+for grade_key in optimal_assignments:
+    print("for grade: ", grade_key)
+    for subject in optimal_assignments[grade_key]:
+        print(" ", subject[0], subject[1])
+    print()
+"""
